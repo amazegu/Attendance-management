@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.toj.mapper.EmployeeMapper">
+	<!-- 为了返回List，类型而定义的resultMap -->
+	<resultMap type="Employee" id="resultListEmployee">
+		<result column="user_name" property="userName" />
+		<result column="name" property="name" />
+		<result column="sex" property="sex" />
+		<result column="password" property="password" />
+	</resultMap>
+
+
+
+
+
+	<!-- 添加学生信息 -->
+	<insert id="insertEmployee" parameterType="Employee">
+		insert into employee(user_name,name,sex,password)
+		value (#{userName}, #{name},#{sex},#{password})
+	</insert>
+
+	<!-- 根据学号删除学生信息 -->
+	<delete id="deleteEmployee" parameterType="Integer">
+		delete from employee where id=#{id}
+	</delete>
+
+	<!-- 根据学号修改学生信息 -->
+	<update id="modifyEmployee" parameterType="Employee">
+		update employee set
+		name=#{name},sex=#{sex},password=#{password}
+		where user_name =#{userName}
+	</update>
+
+	<!-- 修改学生密码 -->
+	<update id="modifyEmployeePwd">
+		update employee set password=#{password} where id =#{id}
+	</update>
+
+	<!-- 根据学号查询出学生实体 -->
+	<select id="getByName" parameterType="String" resultType="com.toj.pojo.Employee">
+		SELECT * from employee where name = #{name}
+	</select>
+
+	<!-- 根据学号查询出学生实体 -->
+	<select id="getByUserName" parameterType="String" resultType="com.toj.pojo.Employee">
+		SELECT * from employee where user_name = #{userName}
+	</select>
+
+	<!-- 根据学号查询出学生实体 -->
+	<select id="getById" parameterType="int" resultType="com.toj.pojo.Employee">
+		SELECT * from employee where id = #{id}
+	</select>
+
+	<!-- 学生登录设置 -->
+	<select id="queryByNamePwd" resultType="java.lang.String">
+		select * from employee where user_name = #{userName} and password= #{password}
+	</select>
+
+	<!-- 查询全部学生 -->
+	<select id="selectEmployeeBySql" parameterType="map" resultMap="resultListEmployee">
+		select * from employee <!-- limit #{pageNo} , #{pageSize} -->
+	</select>
+
+	<!-- 根据学号查询学生信息 -->
+	<select id="getByEmployeeUserName" parameterType="map" resultMap="resultListEmployee">
+		select * from employee where user_name = #{userName} <!-- limit #{pageNo} , #{pageSize} -->
+	</select>
+
+
+	<!-- ajax验证学号是否存在 -->
+	<select id="ajaxQueryByUserName" resultType="java.lang.String">
+		select user_name from employee where user_name = #{userName}
+	</select>
+
+</mapper>

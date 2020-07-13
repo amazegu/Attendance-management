@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.toj.mapper.ProgramMapper">
+    <!-- 为了返回List，类型而定义的resultMap -->
+    <resultMap type="com.toj.pojo.Program" id="resultListProgram">
+        <result column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="startime" property="startime"/>
+        <result column="endtime" property="endtime"/>
+        <result column="rest" property="rest"/>
+        <result column="adress" property="adress"/>
+        <result column="start_date" property="startDate"/>
+        <result column="end_date" property="endDate"/>
+    </resultMap>
+    <insert id="insertProgram" parameterType="Program">
+        insert into program(name,startime,endtime,rest,adress,start_date,end_date)
+		value (#{name},#{startime}, #{endtime},#{rest},#{adress},#{startDate},#{endDate})
+    </insert>
+
+    <update id="updateProgram" parameterType="Program">
+        update program set
+		name=#{name},startime=#{startime},endtime=#{endtime},rest=#{rest},adress=#{adress},start_date=#{startDate},end_date=#{endDate}
+		where id =#{id}
+    </update>
+
+    <delete id="deleteProgram" parameterType="Integer">
+        delete from program where id =#{id}
+    </delete>
+
+    <select id="selectProgram" resultMap="resultListProgram">
+    select p.* from program p where 1 = 1
+		<if test="name != null and name != '' ">
+			and p.name like "%"#{name}"%"
+		</if>
+		<if test="startDate != null and endDate != '' ">
+			and p.start_date &gt;= #{startDate}
+		</if>
+		<if test="endDate != null and endDate != '' ">
+			and p.end_date &lt;= #{endDate}
+		</if>
+		order by p.end_date desc
+    </select>
+
+    <select id="getByPname" resultMap="resultListProgram">
+        select * from program where name =#{pname}
+    </select>
+
+    <select id="getById" resultMap="resultListProgram">
+        select * from program where id =#{id}
+    </select>
+
+    <select id="getByEid" resultType="com.toj.pojo.Program">
+        select p.* from program p left join belong b on b.pid = p.id where b.eid =#{eid}
+    </select>
+
+</mapper>

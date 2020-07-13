@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.toj.mapper.RecordMapper">
+	<!-- 为了返回List，类型而定义的resultMap -->
+	<resultMap type="com.toj.pojo.Record" id="resultListRecord">
+		<result column="name" property="name" />
+		<result column="eid" property="eid" />
+		<result column="remarks" property="remarks" />
+		<result column="date" property="date" />
+		<result column="start_time" property="startime" />
+		<result column="end_time" property="endtime" />
+		<result column="situation" property="situation" />
+		<result column="worktime" property="worktime" />
+		<result column="rest" property="rest" />
+	</resultMap>
+
+
+
+
+
+	<!-- 添加记录 -->
+	<insert id="insertRecord" parameterType="Record">
+		insert into record(eid,remarks,date,start_time,end_time,situation,worktime,rest)
+		value (#{eid},#{remarks}, #{date},#{startime},#{endtime},#{situation},#{worktime},#{rest})
+	</insert>
+
+
+	<!-- 根据用户名修改记录信息 -->
+	<update id="modifyRecord" parameterType="Record">
+		update record set
+		eid=#{eid},remarks=#{remarks},date=#{date},start_time=#{startime},end_time=#{endtime},situation=#{situation},worktime=#{worktime},rest=#{rest}
+		where id =#{id}
+	</update>
+
+	<!-- 根据用户名修改记录信息 -->
+	<update id="updateEndtime" >
+		update record set end_time=#{endtime} where eid=#{eid} and date=#{date}
+	</update>
+
+	<!-- 根据用户名修改记录信息 -->
+	<update id="updateStartime" >
+		update record set start_time=#{startime} where eid=#{eid} and date=#{date}
+	</update>
+
+	<!-- 根据用户名修改记录信息 -->
+	<update id="updateSituation" >
+		update record set situation=#{situation} where eid=#{eid} and date=#{date}
+	</update>
+
+	<!-- 根据用户名修改记录信息 -->
+	<update id="updateremarks" >
+		update record set remarks=#{remarks} where eid=#{eid} and date=#{date}
+	</update>
+
+	<!-- 根据用户名修改记录信息 -->
+	<update id="updateRest" >
+		update record set rest=#{rest},worktime=#{worktime} where eid=#{eid} and date=#{date}
+	</update>
+
+	<!-- 根据用户名修改记录信息 -->
+	<update id="updateWorktime" >
+		update record set worktime=#{worktime} where eid=#{eid} and date=#{date}
+	</update>
+
+	<!-- 根据用户名查询出记录 -->
+	<select id="getByName" parameterType="String" resultMap="resultListRecord">
+		SELECT r.*,e.name from record r left join employee e on e.id = r.eid where e.name = #{name} and r.date = #{date} order by r.date desc
+	</select>
+
+	<!-- 查询全部记录 -->
+	<select id="selectRecordBySql" parameterType="map" resultMap="resultListRecord">
+		select r.*,e.name from record r left join employee e on e.id = r.eid order by r.date desc<!-- limit #{pageNo} , #{pageSize} -->
+	</select>
+
+	<!-- 查询全部记录 -->
+	<select id="getRecordByName" parameterType="map" resultMap="resultListRecord">
+		select r.*,e.name from record r left join employee e on e.id = r.eid where e.name = #{name} order by r.date desc<!-- limit #{pageNo} , #{pageSize} -->
+	</select>
+
+	<!-- 根据学号查询学生信息 -->
+	<select id="getByRecordId" parameterType="map" resultMap="resultListRecord">
+		select r.*,e.name from record r left join employee e on e.id = r.eid where r.id = #{id} <!-- limit #{pageNo} , #{pageSize} -->
+	</select>
+
+	<!-- 根据日期查询记录 -->
+	<select id="getRecordBy" parameterType="map" resultMap="resultListRecord">
+	select r.*,e.name from record r left join employee e on e.id = r.eid where 1 = 1
+		<if test="name != null and name != '' ">
+			and e.name like "%"#{name}"%"
+		</if>
+		<if test="s_date != null and s_date != '' ">
+			and r.date &gt;= #{s_date}
+		</if>
+		<if test="e_date != null and e_date != '' ">
+			and r.date &lt;= #{e_date}
+		</if>
+		order by r.date desc
+	</select>
+
+	<!-- 根据日期查询记录 -->
+	<select id="getRecordByDate" parameterType="map" resultMap="resultListRecord">
+		select r.*,e.name from record r left join employee e on e.id = r.eid where 1 = 1
+		<if test="s_date != null and s_date != '' ">
+			and r.date &gt;= #{s_date}
+		</if>
+		<if test="e_date != null and e_date != '' ">
+			and r.date &lt;= #{e_date}
+		</if>
+		order by r.date desc
+	</select>
+
+
+	<!-- ajax验证用户名是否存在 -->
+	<select id="isBeing" resultMap="resultListRecord">
+		select r.*,e.name from record r left join employee e on e.id = r.eid where e.name = #{name} and r.date = #{date}
+	</select>
+
+	<!-- ajax验证用户名是否存在 -->
+	<select id="getByDay" resultType="java.lang.String">
+		select worktime from record r left join employee e on r.eid = e.id where e.name = #{name} and r.date = #{condition}
+	</select>
+
+</mapper>

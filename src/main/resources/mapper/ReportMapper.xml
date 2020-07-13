@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.toj.mapper.ReportMapper">
+    <!-- 为了返回List，类型而定义的resultMap -->
+    <resultMap type="com.toj.pojo.Record" id="resultListRecord">
+        <result column="name" property="name"/>
+        <result column="eid" property="eid"/>
+        <result column="remarks" property="remarks"/>
+        <result column="date" property="date"/>
+        <result column="start_time" property="startime"/>
+        <result column="end_time" property="endtime"/>
+        <result column="situation" property="situation"/>
+        <result column="worktime" property="worktime"/>
+        <result column="rest" property="rest"/>
+    </resultMap>
+
+    <insert id="insertReport" parameterType="Record">
+        insert into report(eid,remarks,date,start_time,end_time,situation,worktime,rest)
+		value (#{eid},#{remarks}, #{date},#{startime},#{endtime},#{situation},#{worktime},#{rest})
+    </insert>
+
+    <!-- 根据用户名修改记录信息 -->
+    <update id="updateReport" parameterType="Record">
+        update report set
+		eid=#{eid},remarks=#{remarks},date=#{date},start_time=#{startime},end_time=#{endtime},situation=#{situation},worktime=#{worktime},rest=#{rest}
+		where id =#{id}
+    </update>
+
+    <!-- 根据用户名修改记录信息 -->
+    <update id="updateByNameDate" parameterType="Record">
+        update report set
+		eid=#{eid},remarks=#{remarks},date=#{date},start_time=#{startime},end_time=#{endtime},situation=#{situation},worktime=#{worktime},rest=#{rest}
+		where eid =#{eid} and date =#{date}
+    </update>
+
+    <select id="selectReport" parameterType="map" resultMap="resultListRecord">
+        select r.*,e.name from report r left join employee e on e.id = r.eid where e.name = #{name} and r.date = #{date} order by r.date desc
+    </select>
+
+    <select id="selectReportList" parameterType="map" resultMap="resultListRecord">
+    select r.*,e.name from report r left join employee e on e.id = r.eid where 1 = 1
+		<if test="name != null and name != '' ">
+			and e.name like "%"#{name}"%"
+		</if>
+		<if test="s_date != null and s_date != '' ">
+			and r.date &gt;= #{s_date}
+		</if>
+		<if test="e_date != null and e_date != '' ">
+			and r.date &lt;= #{e_date}
+		</if>
+		order by r.date desc
+    </select>
+
+    <select id="getById" parameterType="map" resultMap="resultListRecord">
+	    select r.*,e.name from report r left join employee e on e.id = r.eid where r.id = #{id} <!-- limit #{pageNo} , #{pageSize} -->
+	</select>
+
+	<delete id="deleteReport">
+	    delete from report where id = #{id}
+    </delete>
+
+
+</mapper>
