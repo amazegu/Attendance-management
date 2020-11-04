@@ -386,7 +386,7 @@ public class AdminHandler {
             response.setContentType("application/x-download");
             response.setCharacterEncoding("utf-8");
             response.setHeader("Content-Disposition", "inline;filename=" + new String(fileName.getBytes("utf-8"), "iso8859-1"));
-            String templatePath = this.getClass().getClassLoader().getResource("/Excel/record.xlsx").getPath();
+            String templatePath = request.getSession().getServletContext().getRealPath("") + File.separator + "WEB-INF" + File.separator + "classes" + File.separator + "Excel" + File.separator + "record.xlsx";
             ExcelUtil.exportExcelByTemplate(templatePath, "出勤記録表", rowMap, 2, response);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
